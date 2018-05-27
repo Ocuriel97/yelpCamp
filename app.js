@@ -3,24 +3,11 @@ var request = require('request')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
 var campground = require ('./models/campground')
+var seedDB = require('./seeds')
+
+seedDB()
 
 mongoose.connect('mongodb://localhost/yelp_camp')
-
-//creates a new campground manually
-// campground.create(
-//   {
-//     name: 'flats',
-//     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/1991-1996_BMW_318i_%28E36%29_sedan_%282011-04-02%29_01.jpg/1200px-1991-1996_BMW_318i_%28E36%29_sedan_%282011-04-02%29_01.jpg',
-//     description: "this flat is dope af"
-//   }, function(err, campground){
-//     if(err){
-//       console.log(err)
-//     } else {
-//       console.log('new campground')
-//       console.log(campground)
-//     }
-//   }
-// )
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.set('view engine', 'ejs')
@@ -63,7 +50,7 @@ app.get('/campgrounds/new', function(req,res){
 
 //Opens the campground page
 app.get('/campgrounds/:id', function(req,res){
-  campground.findById(req.params.id, function(err, foundCamp){
+  campground.findById(req.params.id).populate('comments').exec(function(err, foundCamp){
     if (err) {
       console.log(err)
     } else {

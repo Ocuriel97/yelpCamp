@@ -2,17 +2,11 @@ var app = require('express')()
 var request = require('request')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
+var campground = require ('./models/campground')
 
 mongoose.connect('mongodb://localhost/yelp_camp')
 
-var campgroundSchema = new mongoose.Schema({
-  name: String,
-  image: String,
-  description: String
-})
-
-var campground = mongoose.model('Campground', campgroundSchema)
-
+//creates a new campground manually
 // campground.create(
 //   {
 //     name: 'flats',
@@ -31,10 +25,12 @@ var campground = mongoose.model('Campground', campgroundSchema)
 app.use(bodyParser.urlencoded({extended: true}))
 app.set('view engine', 'ejs')
 
+//root page base url
 app.get('/', function(req,res){
   res.render('landing')
 })
 
+//shows all the campgrounds that are currently on the db
 app.get('/campgrounds', function(req,res){
   campground.find({}, function(err,allCampgrounds){
     if (err) {
@@ -43,9 +39,9 @@ app.get('/campgrounds', function(req,res){
       res.render('index', {campgrounds: allCampgrounds})
     }
   })
-  //res.render('campgrounds', {campgrounds: campgrounds})
 })
 
+//sends the created campground to the db
 app.post('/campgrounds', function(req,res){
   var name = req.body.name
   var image = req.body.image
@@ -60,10 +56,12 @@ app.post('/campgrounds', function(req,res){
   })
 })
 
+//the page that you create a campground
 app.get('/campgrounds/new', function(req,res){
   res.render('new')
 })
 
+//Opens the campground page
 app.get('/campgrounds/:id', function(req,res){
   campground.findById(req.params.id, function(err, foundCamp){
     if (err) {
@@ -74,6 +72,7 @@ app.get('/campgrounds/:id', function(req,res){
   })
 })
 
+//port that the server is running on
 app.listen(3000, function(){
   console.log('App running');
 })

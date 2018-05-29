@@ -1,4 +1,5 @@
-var app = require('express')()
+var express = require('express')
+var app = express()
 var request = require('request')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
@@ -12,10 +13,11 @@ mongoose.connect('mongodb://localhost/yelp_camp')
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.set('view engine', 'ejs')
+app.use(express.static(__dirname + "/public"))
 
 //root page base url
 app.get('/', function(req,res){
-  res.render('landing')
+  res.redirect('campgrounds')
 })
 
 //shows all the campgrounds that are currently on the db
